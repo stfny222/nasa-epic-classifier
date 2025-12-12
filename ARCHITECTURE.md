@@ -34,7 +34,7 @@ ImageNet Pre-trained ResNet18
 - **Single output** directly predicts land percentage
 
 **Performance:**
-- MAE: 5.92% | RMSE: 7.95% | R²: 0.8444
+- MAE: 5.48% | RMSE: 8.32% | R²: 0.8296
 
 ## Data Pipeline
 

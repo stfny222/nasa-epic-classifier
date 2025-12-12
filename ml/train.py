@@ -260,7 +260,7 @@ def train_model(train_loader, val_loader):
     # Setup training
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=CONFIG['learning_rate'], weight_decay=CONFIG['weight_decay'])
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3, verbose=True)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
     
     # Use project-relative path for checkpoint
     checkpoint_path = Path(__file__).parent / 'models' / '.best_model_checkpoint.pth'
@@ -421,8 +421,8 @@ def save_model(model, metrics, output_dir):
     }
     
     model_file = output_dir / 'land_ocean_regressor.pkl'
-    with open(model_file, 'wb') as f:
-        pickle.dump(model_package, f)
+    # Use torch.save instead of pickle.dump for better compatibility
+    torch.save(model_package, model_file)
     
     print(f"✓ Model saved to: {model_file}")
     print(f"  File size: {model_file.stat().st_size / 1e6:.1f} MB")

@@ -32,8 +32,8 @@ class LandOceanPredictor:
     def _load_model(self):
         """Load model from pickle file."""
         try:
-            with open(self.model_path, 'rb') as f:
-                model_package = pickle.load(f)
+            # Use torch.load with map_location and weights_only=False for pickle compatibility
+            model_package = torch.load(self.model_path, map_location=self.device, weights_only=False)
             
             # Create model architecture
             self.model = LandPercentageRegressor(pretrained=False)

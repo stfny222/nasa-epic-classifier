@@ -6,15 +6,15 @@
 
 | Metric | Value |
 |--------|-------|
-| **MAE** (Mean Absolute Error) | 5.92% |
-| **RMSE** (Root Mean Squared Error) | 7.95% |
-| **R²** Score | 0.8444 |
+| **MAE** (Mean Absolute Error) | 5.48% |
+| **RMSE** (Root Mean Squared Error) | 8.32% |
+| **R²** Score | 0.8296 |
 
 **Error Distribution:**
-- Mean error: 5.92%
-- Median error: --
-- Max error: --
-- Min error: --
+- Mean error: 5.48%
+- Median error: 2.90%
+- Max error: 24.81%
+- Min error: 0.99%
 
 ## Dataset
 
