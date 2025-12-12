@@ -39,6 +39,9 @@ ml/data_epic/
 ml/processed_data/
 ml/experiments/*/outputs/
 
+# Keep visualization outputs
+!ml/experiments/visualizations/outputs/
+
 # Misc
 .env
 .env.local
