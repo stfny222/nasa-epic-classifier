@@ -76,7 +76,7 @@ def main():
     
     # Build model
     print("\n[2/3] Building model...")
-    num_labels = len(GEOGRAPHIC_LABEL_COLUMNS)  # 11 binary labels
+    num_labels = len(GEOGRAPHIC_LABEL_COLUMNS)  # 6 binary labels
     model = build_geographic_cnn(
         input_shape=tuple(config['model']['input_shape']),
         num_labels=num_labels,

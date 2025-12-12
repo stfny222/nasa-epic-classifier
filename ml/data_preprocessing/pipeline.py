@@ -136,7 +136,7 @@ def load_preprocessed_epic_data(
                 normalize=True
             )
             
-            # Encode geographic labels (11 binary labels)
+            # Encode geographic labels (6 binary labels)
             geo_labels = encode_geographic_labels(row)
             
             X.append(img_array)
