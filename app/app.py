@@ -10,6 +10,13 @@ import io
 from PIL import Image
 import base64
 
+# Load environment variables from .env file (if it exists)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # python-dotenv not installed, use system env vars
+
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -241,5 +248,16 @@ def create_app(config=None):
 
 
 if __name__ == '__main__':
+    # Load configuration from environment
+    flask_env = os.environ.get('FLASK_ENV', 'development')
+    flask_debug = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
+    port = int(os.environ.get('FLASK_PORT', os.environ.get('PORT', 5000)))
+    
+    print(f"\n{'='*50}")
+    print(f"Environment: {flask_env}")
+    print(f"Debug Mode: {flask_debug}")
+    print(f"Port: {port}")
+    print(f"{'='*50}\n")
+    
     app = create_app()
-    app.run(debug=True, port=5000)
+    app.run(debug=flask_debug, host='0.0.0.0', port=port)
