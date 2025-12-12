@@ -125,8 +125,10 @@ def load_preprocessed_epic_data(
     
     def load_split(df: pd.DataFrame):
         from PIL import Image
+        import logging
         
         X = []
+        skipped_count = 0
         
         for idx, row in df.iterrows():
             try:
@@ -136,8 +138,13 @@ def load_preprocessed_epic_data(
                     normalize=True
                 )
                 X.append(img_array)
-            except Exception:
+            except Exception as e:
+                skipped_count += 1
+                logging.warning(f"Failed to load image {row['image_path']}: {e}")
                 continue
+        
+        if skipped_count > 0:
+            print(f"  ⚠ Skipped {skipped_count} images due to errors")
         
         X = np.array(X, dtype=np.float32)
         y = {}

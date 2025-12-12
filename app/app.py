@@ -160,15 +160,17 @@ def create_app(config=None):
                 return jsonify(result), 500
             
             # Get ground truth from coordinates
-            lat = image_info.get('lat', 0)
-            lon = image_info.get('lon', 0)
+            lat = image_info.get('lat', None)
+            lon = image_info.get('lon', None)
             
             ground_truth = None
-            try:
-                geo_labels = compute_geographic_labels(lat, lon)
-                ground_truth = geo_labels.get('land_percentage', None)
-            except:
-                pass
+            if lat is not None and lon is not None:
+                try:
+                    geo_labels = compute_geographic_labels(lat, lon)
+                    ground_truth = geo_labels.get('land_percentage', None)
+                except Exception as e:
+                    print(f"Warning: Could not compute ground truth: {e}")
+                    pass
             
             # Encode image as base64 for frontend
             buffered = io.BytesIO()

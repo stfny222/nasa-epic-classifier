@@ -81,7 +81,7 @@ def build_catalog(
         
         # Filter to only existing images
         df["exists"] = df["image_path"].apply(lambda x: pathlib.Path(x).exists())
-        df = df[df["exists"].values].drop(columns=["exists"], errors="ignore")
+        df = df[df["exists"]].drop(columns=["exists"], errors="ignore")
         
         all_metadata.append(df)
     
