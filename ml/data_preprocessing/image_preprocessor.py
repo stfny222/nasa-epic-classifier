@@ -70,7 +70,7 @@ def encode_geographic_labels(row: pd.Series) -> np.ndarray:
     Returns
     -------
     np.ndarray
-        Binary array of shape (11,) with 0/1 for each region
+        Binary array of shape (6,) with 0/1 for each region
     """
     labels = np.zeros(len(GEOGRAPHIC_LABEL_COLUMNS), dtype=np.float32)
     
