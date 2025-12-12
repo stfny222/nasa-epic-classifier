@@ -262,6 +262,10 @@ def train_model(train_loader, val_loader):
     optimizer = optim.Adam(model.parameters(), lr=CONFIG['learning_rate'], weight_decay=CONFIG['weight_decay'])
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3, verbose=True)
     
+    # Use project-relative path for checkpoint
+    checkpoint_path = Path(__file__).parent / 'models' / '.best_model_checkpoint.pth'
+    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+    
     history = {'train_loss': [], 'val_loss': [], 'train_mae': [], 'val_mae': []}
     best_val_loss = float('inf')
     patience_counter = 0
@@ -292,7 +296,7 @@ def train_model(train_loader, val_loader):
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             patience_counter = 0
-            torch.save(model.state_dict(), '/tmp/best_land_regressor_model.pth')
+            torch.save(model.state_dict(), checkpoint_path)
             print(f"  ✓ Best validation loss: {best_val_loss:.4f}")
         else:
             patience_counter += 1
@@ -302,7 +306,7 @@ def train_model(train_loader, val_loader):
         print()
     
     # Load best model
-    model.load_state_dict(torch.load('/tmp/best_land_regressor_model.pth'))
+    model.load_state_dict(torch.load(checkpoint_path))
     print("✓ Training complete!")
     
     return model, history

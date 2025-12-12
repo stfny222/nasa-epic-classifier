@@ -27,7 +27,6 @@ TRAIN_TRANSFORM = transforms.Compose([
     transforms.CenterCrop(224),
     transforms.RandomRotation(15),
     transforms.RandomHorizontalFlip(p=0.5),
-    transforms.RandomVerticalFlip(p=0.3),
     transforms.ColorJitter(brightness=0.2, contrast=0.2),
     transforms.ToTensor(),
     transforms.Normalize(
