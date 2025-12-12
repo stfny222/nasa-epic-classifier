@@ -2,13 +2,10 @@
 Models Package
 ==============
 
-Neural network architectures for multi-label classification.
+Neural network architectures for land-ocean regression.
 """
 
-from .geographic_cnn import GeographicCNN
-from .resnet_geographic import ResNetGeographic
-from .multiscale_cnn import MultiScaleCNN
-from .ensemble import EnsembleModel
+from .land_ocean_regressor import LandPercentageRegressor
 
-__all__ = ['GeographicCNN', 'ResNetGeographic', 'MultiScaleCNN', 'EnsembleModel']
+__all__ = ['LandPercentageRegressor']
 
