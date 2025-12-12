@@ -1,0 +1,32 @@
+ensemble:
+  models:
+    - type: "resnet18"
+      checkpoint_path: "../resnet_transfer/outputs/model_best.pt"
+      weight: 0.55  # Slightly higher weight (F1=0.83)
+    - type: "multiscale"
+      checkpoint_path: "../multiscale_cnn/outputs/model_best.pt"
+      weight: 0.45  # Slightly lower weight (F1=0.74)
+
+data:
+  collection: "natural"
+  image_type: "png"
+  target_size: [224, 224]
+  limit_per_date: 30
+  dates:
+    - "2021-02-10"
+    - "2019-03-21"
+    - "2020-04-15"
+    - "2021-05-25"
+    - "2019-06-20"
+    - "2020-07-10"
+    - "2021-08-15"
+    - "2020-10-15"
+    - "2021-11-05"
+
+evaluation:
+  batch_size: 16
+  threshold: 0.35
+  strategies:
+    - "equal_weights"      # Simple average
+    - "f1_weighted"        # Weight by individual F1 scores
+    - "max_voting"         # Take max probability across models
