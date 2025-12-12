@@ -4,7 +4,7 @@ import sys
 import random
 import requests
 from pathlib import Path
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_file
 from werkzeug.utils import secure_filename
 import io
 from PIL import Image
@@ -210,6 +210,30 @@ def create_app(config=None):
             'success': True,
             'metrics': app.predictor.metrics
         })
+    
+    @app.route('/static/training_history.png')
+    def serve_training_history():
+        """Serve training history visualization."""
+        try:
+            model_dir = Path(__file__).parent.parent / 'ml' / 'models'
+            img_path = model_dir / 'training_history.png'
+            if not img_path.exists():
+                return jsonify({'error': 'Image not found'}), 404
+            return send_file(str(img_path), mimetype='image/png')
+        except Exception as e:
+            return jsonify({'error': f'Failed to serve image: {str(e)}'}), 500
+    
+    @app.route('/static/test_results.png')
+    def serve_test_results():
+        """Serve test results visualization."""
+        try:
+            model_dir = Path(__file__).parent.parent / 'ml' / 'models'
+            img_path = model_dir / 'test_results.png'
+            if not img_path.exists():
+                return jsonify({'error': 'Image not found'}), 404
+            return send_file(str(img_path), mimetype='image/png')
+        except Exception as e:
+            return jsonify({'error': f'Failed to serve image: {str(e)}'}), 500
     
     return app
 

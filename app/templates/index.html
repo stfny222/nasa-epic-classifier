@@ -211,8 +211,14 @@
             margin-bottom: 15px;
         }
 
+        .percentage-values {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
         .percentage-item {
-            flex: 1;
             text-align: center;
         }
 
@@ -236,32 +242,40 @@
             font-weight: 600;
         }
 
-        .progress-bar {
+        .combined-progress-bar {
             width: 100%;
-            height: 30px;
+            height: 40px;
             background: #eee;
-            border-radius: 15px;
+            border-radius: 20px;
             overflow: hidden;
-            margin-top: 10px;
+            display: flex;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .progress-fill {
+        .progress-land {
             height: 100%;
+            background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 0.9em;
+            font-size: 0.95em;
             transition: width 0.5s ease;
+            min-width: 40px;
         }
 
-        .land .progress-fill {
-            background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
-        }
-
-        .ocean .progress-fill {
+        .progress-ocean {
+            height: 100%;
             background: linear-gradient(90deg, #2980b9 0%, #3498db 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.95em;
+            transition: width 0.5s ease;
+            min-width: 40px;
         }
 
         .ground-truth {
@@ -512,6 +526,20 @@
                 </section>
 
                 <section style="margin-bottom: 30px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">📈 Training Visualizations</h3>
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div style="text-align: center;">
+                            <h4 style="color: #333; margin-bottom: 10px;">Training History</h4>
+                            <img src="/static/training_history.png" alt="Training History" style="max-width: 100%; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                        </div>
+                        <div style="text-align: center;">
+                            <h4 style="color: #333; margin-bottom: 10px;">Test Results</h4>
+                            <img src="/static/test_results.png" alt="Test Results" style="max-width: 100%; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                        </div>
+                    </div>
+                </section>
+
+                <section style="margin-bottom: 30px;">
                     <h3 style="color: #333; margin-bottom: 15px;">🛰️ Data Source</h3>
                     <div style="background: white; border-left: 4px solid #667eea; padding: 15px; border-radius: 6px;">
                         <p style="color: #666; margin-bottom: 10px;">
@@ -680,20 +708,19 @@
 
             html += '<div class="prediction-card">';
             html += '<h3>🤖 Model Prediction (Image Analysis Only)</h3>';
-            html += '<div class="percentage-display">';
-            
+            html += '<div class="percentage-values">';
             html += '<div class="percentage-item land">';
             html += `<div class="percentage-value">${landPct}%</div>`;
             html += '<div class="percentage-label">Land</div>';
-            html += `<div class="progress-bar"><div class="progress-fill" style="width: ${landPct}%">${landPct}%</div></div>`;
             html += '</div>';
-
             html += '<div class="percentage-item ocean">';
             html += `<div class="percentage-value">${oceanPct}%</div>`;
             html += '<div class="percentage-label">Ocean</div>';
-            html += `<div class="progress-bar"><div class="progress-fill" style="width: ${oceanPct}%">${oceanPct}%</div></div>`;
             html += '</div>';
-
+            html += '</div>';
+            html += '<div class="combined-progress-bar">';
+            html += `<div class="progress-land" style="width: ${landPct}%">${landPct}%</div>`;
+            html += `<div class="progress-ocean" style="width: ${oceanPct}%">${oceanPct}%</div>`;
             html += '</div>';
 
             if (groundTruth !== null && groundTruth !== undefined) {
