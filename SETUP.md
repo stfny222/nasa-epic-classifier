@@ -17,149 +17,141 @@ python3.11 -m venv venv
 source venv/bin/activate
 
 # Install dependencies
-pip install torch torchvision pillow scikit-learn pyyaml numpy pandas
+pip install torch torchvision pillow scikit-learn numpy pandas flask requests
 ```
 
 ## Quick Start
 
 ```bash
-# Download data and train best model
-python ml/experiments/resnet_transfer/main.py
+# Train the regression model
+python ml/train.py
 
-# Output: model saved to ml/models/checkpoints/resnet18_best.pt
-# Test F1: 0.8316
+# This will:
+# - Download EPIC satellite images
+# - Compute ground truth land percentages from coordinates
+# - Train ResNet18 regression model
+# - Save model to ml/models/land_ocean_regressor.pkl
+# - Generate training plots
 ```
 
-**Training Time:** 5-15 minutes on GPU (NVIDIA Tesla T4 or better)
+**Training Time:** 5-15 minutes on GPU
 
 ## Make Predictions
 
 ### Single Image
 
 ```python
-import torch
-from torchvision import transforms
+from app.model_utils import LandOceanPredictor
 from PIL import Image
-from ml.models.resnet_transfer import ResNetTransferLearner
 
-# Load model
-model = ResNetTransferLearner()
-model.load_state_dict(torch.load('ml/models/checkpoints/resnet18_best.pt'))
-model.eval()
+# Initialize predictor (loads model automatically)
+predictor = LandOceanPredictor()
 
-# Load image
+# Load and predict
 image = Image.open('satellite_image.png')
-preprocess = transforms.Compose([
-    transforms.Resize(299),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                        std=[0.229, 0.224, 0.225])
-])
-img_tensor = preprocess(image).unsqueeze(0)
+result = predictor.predict(image)
 
-# Predict
-with torch.no_grad():
-    logits = model(img_tensor)
-    probs = torch.sigmoid(logits)[0]
-    predictions = (probs > 0.35).int()
-
-continents = ['North America', 'South America', 'Europe', 'Africa', 'Asia', 'Oceania']
-visible = [continents[i] for i, p in enumerate(predictions) if p]
-print(f"Visible: {visible}")
+print(f"Land: {result['land_percentage']:.1f}%")
+print(f"Ocean: {result['ocean_percentage']:.1f}%")
 ```
 
-### Batch Processing
+### With Ground Truth
 
 ```python
-from torch.utils.data import DataLoader
-from ml.data_preprocessing.image_preprocessor import EpicDataset
+from ml.data_preprocessing.geographic_labels import compute_geographic_labels
 
-# Create dataset
-dataset = EpicDataset(image_dir='path/to/images')
-loader = DataLoader(dataset, batch_size=16)
+# Get ground truth from coordinates
+lat, lon = 0.0, -22.5
+geo_labels = compute_geographic_labels(lat, lon)
+print(f"Ground truth: {geo_labels['land_percentage']:.1f}%")
 
-# Predict on all
-all_preds = []
-with torch.no_grad():
-    for images in loader:
-        logits = model(images)
-        probs = torch.sigmoid(logits)
-        preds = (probs > 0.35).int()
-        all_preds.append(preds.cpu())
+# Compare with model prediction
+prediction = predictor.predict(image)
+error = abs(prediction['land_percentage'] - geo_labels['land_percentage'])
+print(f"Prediction error: {error:.1f}%")
+```
 
-predictions = torch.cat(all_preds, dim=0)
-torch.save(predictions, 'predictions.pt')
+## Flask Web App
+
+Start the web interface for easy prediction and image exploration.
+
+### Quick Start
+
+```bash
+# 1. Train model first (if not done)
+python ml/train.py
+
+# 2. Start app
+python app/app.py
+
+# 3. Open browser to http://localhost:5000
+```
+
+### Features
+
+**Upload Image**
+- Upload satellite image from your computer
+- Get land percentage prediction
+
+**Random EPIC Image**
+- Download random image from NASA EPIC dataset
+- Get prediction with ground truth for comparison
+
+### API Endpoints
+
+- `GET /` — Web UI
+- `GET /api/status` — Server status
+- `POST /api/predict` — Upload image, get prediction (form: `image` file, optional: `lat`, `lon`)
+- `GET /api/random` — Download random EPIC image and predict
+- `GET /api/metrics` — Model performance metrics
+
+### Example Python Client
+
+```python
+import requests
+
+# Upload image with optional ground truth
+files = {'image': open('satellite.png', 'rb')}
+data = {'lat': 0.0, 'lon': -22.5}
+response = requests.post('http://localhost:5000/api/predict', files=files, data=data)
+result = response.json()
+
+print(f"Prediction: {result['land_percentage']:.1f}%")
+print(f"Ground truth: {result['ground_truth_land_percentage']:.1f}%")
+
+# Get random image
+response = requests.get('http://localhost:5000/api/random')
+data = response.json()
+print(f"Image from {data['date']}")
+print(f"Prediction: {data['land_percentage']:.1f}%")
+print(f"Ground truth: {data['ground_truth_land_percentage']:.1f}%")
 ```
 
 ## Troubleshooting
 
 ### CUDA Out of Memory
 ```bash
-# Reduce batch size in config.yaml:
-batch_size: 8  # was 16
+# Reduce batch size in ml/train.py:
+batch_size = 8  # was 16
 
 # Or use CPU:
 export CUDA_VISIBLE_DEVICES=""
-python ml/experiments/resnet_transfer/main.py
+python ml/train.py
 ```
 
-### Model Predicting All Zeros (F1=0.0)
+### Model File Not Found
 ```bash
-# Check threshold in main.py:
-predictions = (logits > 0.35).int()  # NOT > 0.5
-
-# Verify data loading:
-python -c "
-from ml.data_preprocessing.image_preprocessor import load_epic_data
-X_train, _, _, y_train, _, _ = load_epic_data()
-print(f'Positive rate: {y_train.mean():.1%}')  # Should be 30-45%
-"
+# Train the model first:
+python ml/train.py
 ```
 
-### FileNotFoundError: data_epic not found
+### API Requests Fail
 ```bash
-# Download data first:
-cd ml/data_preprocessing
-python catalog_builder.py
+# Check Flask app is running:
+python app/app.py
 
-# Or create directories:
-mkdir -p ml/data_epic ml/processed_data
-```
-
-### Training Loss Not Decreasing
-```bash
-# Reduce learning rate in config.yaml:
-learning_rate: 0.00005  # was 0.0001
-
-# Check data normalization (ImageNet standard):
-mean=[0.485, 0.456, 0.406]
-std=[0.229, 0.224, 0.225]
-```
-
-## Running Experiments
-
-```bash
-# Baseline CNN
-python ml/experiments/baseline_cnn/main.py
-
-# Multi-Scale CNN
-python ml/experiments/multiscale_cnn/main.py
-
-# Ensemble
-python ml/experiments/ensemble/main.py
-
-# Results saved to ml/experiments/{name}/outputs/
-```
-
-## Configuration
-
-Edit `ml/experiments/resnet_transfer/config.yaml`:
-
-```yaml
-num_epochs: 30
-batch_size: 16
-learning_rate: 0.0001
-threshold: 0.35
+# Test connectivity:
+curl http://localhost:5000/api/status
 ```
 
 ---

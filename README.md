@@ -1,12 +1,13 @@
 # NASA EPIC Classifier
 
-Classify satellite images by visible continents using deep learning.
+Predict land/ocean percentage in satellite images using deep learning.
 
 ## Quick Results
 
-- **Best Model:** ResNet18 Transfer Learning (F1=0.83)
+- **Model:** ResNet18 Transfer Learning (Regression)
 - **Dataset:** 141 NASA EPIC satellite images  
-- **Task:** Predict which continents are visible
+- **Task:** Predict percentage of land visible (0-100%)
+- **MAE:** 5.15% | **R²:** 0.88
 
 ## Quick Start
 
@@ -14,38 +15,40 @@ Classify satellite images by visible continents using deep learning.
 # Setup
 conda create -n epic python=3.11
 conda activate epic
-pip install torch torchvision pillow scikit-learn pyyaml numpy pandas
+pip install torch torchvision pillow flask requests numpy pandas scikit-learn
 
-# Train best model (5-15 min on GPU)
-python ml/experiments/resnet_transfer/main.py
+# Train model (5-15 min on GPU)
+python ml/train.py
+
+# Start web app
+python app/app.py
+
+# Open http://localhost:5000
 ```
-
-## Model Comparison
-
-| Model | F1 | Accuracy |
-|-------|-----|----------|
-| Baseline CNN | 0.45 | 0.30 |
-| Multi-Scale | 0.74 | 0.83 |
-| **ResNet18** | **0.83** | **0.90** |
-| Ensemble | 0.80 | 0.88 |
 
 ## How It Works
 
-1. **Labels:** Extract lat/lon from satellite metadata
+1. **Ground Truth:** Extract lat/lon from satellite metadata
    - Compute distance to continent centers (haversine)
-   - Label visible if within 2000 km
-   - Output: 6 binary continent labels
+   - Estimate land percentage based on visible continents
+   - Output: 0-100% land coverage
 
 2. **Model:** ResNet18 fine-tuned from ImageNet
-   - Pre-trained backbone + trainable layer 4 + head
-   - Threshold = 0.35 (tuned for this dataset)
+   - Pre-trained backbone → trainable layer 4 → regression head
+   - Predicts land percentage from image pixels
+   - Optimized for small datasets
+
+3. **Web App:** Flask interface for prediction
+   - Upload images or get random EPIC images
+   - Compare predictions with ground truth
+   - REST API for integration
 
 ## Documentation
 
-- **[SETUP.md](SETUP.md)** — Installation, training, inference
+- **[SETUP.md](SETUP.md)** — Installation, training, API usage
 - **[RESULTS.md](RESULTS.md)** — Detailed metrics and analysis
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** — Model designs and algorithms
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** — Model design and pipeline
 
 ---
 
-License: MIT | Best F1: 0.83
+**Best Score:** MAE 5.15% | **License:** MIT
