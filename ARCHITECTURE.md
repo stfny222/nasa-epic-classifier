@@ -13,12 +13,12 @@ For each satellite image:
 ```
 
 **Continent Centers:**
-- North America: 47.0°N, 97.0°W
-- South America: 10.0°S, 60.0°W
-- Europe: 50.0°N, 10.0°E
-- Africa: 6.0°N, 20.0°E
-- Asia: 45.0°N, 100.0°E
-- Oceania: 22.0°S, 147.0°E
+- North America: 45.0°N, 100.0°W (Central USA/Canada)
+- South America: 15.0°S, 60.0°W (Central Brazil)
+- Europe: 50.0°N, 10.0°E (Central Europe)
+- Africa: 0.0°N, 20.0°E (Central Africa)
+- Asia: 30.0°N, 100.0°E (Central/East Asia)
+- Oceania: 25.0°S, 135.0°E (Australia)
 
 ## Model Architectures
 
