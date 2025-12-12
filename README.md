@@ -7,7 +7,7 @@ Predict land/ocean percentage in satellite images using deep learning.
 - **Model:** ResNet18 Transfer Learning (Regression)
 - **Dataset:** 141 NASA EPIC satellite images  
 - **Task:** Predict percentage of land visible (0-100%)
-- **MAE:** 5.15% | **R²:** 0.88
+- **MAE:** 5.92% | **R²:** 0.84
 
 ## Quick Start
 
@@ -51,4 +51,4 @@ python app/app.py
 
 ---
 
-**Best Score:** MAE 5.15% | **License:** MIT
+**Best Score:** MAE 5.92% | **License:** MIT

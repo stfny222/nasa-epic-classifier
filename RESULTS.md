@@ -6,15 +6,15 @@
 
 | Metric | Value |
 |--------|-------|
-| **MAE** (Mean Absolute Error) | 5.15% |
-| **RMSE** (Root Mean Squared Error) | 6.84% |
-| **R²** Score | 0.8847 |
+| **MAE** (Mean Absolute Error) | 5.92% |
+| **RMSE** (Root Mean Squared Error) | 7.95% |
+| **R²** Score | 0.8444 |
 
 **Error Distribution:**
-- Mean error: 5.15%
-- Median error: 3.95%
-- Max error: 20.61%
-- Min error: 0.19%
+- Mean error: 5.92%
+- Median error: --
+- Max error: --
+- Min error: --
 
 ## Dataset
 
@@ -68,7 +68,7 @@ We initially considered multi-label classification (6 continent labels), but reg
 | Aspect | Regression | Classification |
 |--------|-----------|-----------------|
 | **Task** | Predict land % (0-100) | Predict visible continents (6 labels) |
-| **Metric** | MAE: 5.15% | Would be F1: ~0.83 |
+| **Metric** | MAE: 5.92% | Would be F1: ~0.83 |
 | **Ground Truth** | Continuous coordinates | Discrete continent visibility |
 | **Model** | Single output neuron | 6 sigmoid outputs |
 | **Inference** | 1 value per image | 6 values per image |
