@@ -10,7 +10,7 @@ import pandas as pd
 from typing import List, Tuple
 from tqdm import tqdm
 
-from .api_client import get_metadata_for_date
+from ml.api_client import get_metadata_for_date
 
 
 def normalize_metadata(metadata: List[dict], date_str: str) -> pd.DataFrame:
@@ -81,7 +81,7 @@ def build_catalog(
         
         # Filter to only existing images
         df["exists"] = df["image_path"].apply(lambda x: pathlib.Path(x).exists())
-        df = df[df["exists"]].drop(columns=["exists"])
+        df = df[df["exists"].values].drop(columns=["exists"], errors="ignore")
         
         all_metadata.append(df)
     

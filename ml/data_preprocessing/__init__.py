@@ -5,7 +5,7 @@ Data Preprocessing Package
 Complete pipeline for loading, labeling, and preprocessing EPIC imagery.
 """
 
-from .api_client import (
+from ml.api_client import (
     list_available_dates,
     get_metadata_for_date,
     download_images,

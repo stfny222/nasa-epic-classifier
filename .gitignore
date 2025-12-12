@@ -34,13 +34,15 @@ ENV/
 *~
 .DS_Store
 
-# Project-specific data (large generated files)
+# Project-specific data (downloaded satellite images and processed data)
 ml/data_epic/
 ml/processed_data/
-ml/experiments/*/outputs/
 
-# Keep visualization outputs
-!ml/experiments/visualizations/outputs/
+# Keep trained model and metrics
+!ml/models/land_ocean_regressor.pkl
+!ml/models/regression_metrics.json
+!ml/models/test_results.png
+!ml/models/training_history.png
 
 # Misc
 .env

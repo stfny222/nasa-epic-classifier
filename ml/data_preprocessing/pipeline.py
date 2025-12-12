@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 from typing import Tuple, List, Optional
 
-from .api_client import download_images
+from ml.api_client import download_images
 from .catalog_builder import build_catalog
 from .label_generator import compute_catalog_geographic_labels
 from .data_splitter import split_data
@@ -84,7 +84,7 @@ def load_preprocessed_epic_data(
     # Step 1: Download images
     print("\n[1/5] Downloading images...")
     if dates is None:
-        from .api_client import list_available_dates
+        from ml.api_client import list_available_dates
         all_dates = list_available_dates(collection)
         # Use last available date by default
         dates = [all_dates[-1]]
@@ -124,28 +124,23 @@ def load_preprocessed_epic_data(
     print("\n[5/5] Loading and preprocessing images...")
     
     def load_split(df: pd.DataFrame):
-        from .image_preprocessor import GEOGRAPHIC_LABEL_COLUMNS, encode_geographic_labels
+        from PIL import Image
         
         X = []
-        y_geographic = []
         
         for idx, row in df.iterrows():
-            img_array = load_and_preprocess_image(
-                row["image_path"],
-                target_size=target_size,
-                normalize=True
-            )
-            
-            # Encode geographic labels (6 binary labels)
-            geo_labels = encode_geographic_labels(row)
-            
-            X.append(img_array)
-            y_geographic.append(geo_labels)
+            try:
+                img_array = load_and_preprocess_image(
+                    row["image_path"],
+                    target_size=target_size,
+                    normalize=True
+                )
+                X.append(img_array)
+            except Exception:
+                continue
         
         X = np.array(X, dtype=np.float32)
-        y = {
-            "geographic": np.array(y_geographic, dtype=np.float32)
-        }
+        y = {}
         return X, y
     
     print("  Loading train set...")
@@ -158,9 +153,9 @@ def load_preprocessed_epic_data(
     X_test, y_test = load_split(test_df)
     
     print(f"\n✓ Preprocessing complete!")
-    print(f"  X_train: {X_train.shape}, y_train: geographic={y_train['geographic'].shape}")
-    print(f"  X_val:   {X_val.shape}, y_val:   geographic={y_val['geographic'].shape}")
-    print(f"  X_test:  {X_test.shape}, y_test:  geographic={y_test['geographic'].shape}")
+    print(f"  X_train: {X_train.shape}")
+    print(f"  X_val:   {X_val.shape}")
+    print(f"  X_test:  {X_test.shape}")
     
     # Cache results
     print(f"\nSaving to cache: {cache_file}")
