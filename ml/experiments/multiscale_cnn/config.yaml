@@ -1,0 +1,29 @@
+model:
+  type: "multiscale_cnn"
+  input_shape: [224, 224, 3]
+  dropout_rate: 0.5
+  branch_kernels: [3, 5, 7]  # Small, medium, large kernel sizes
+
+data:
+  collection: "natural"
+  image_type: "png"
+  target_size: [224, 224]
+  limit_per_date: 30
+  dates:
+    - "2021-02-10"
+    - "2019-03-21"
+    - "2020-04-15"
+    - "2021-05-25"
+    - "2019-06-20"
+    - "2020-07-10"
+    - "2021-08-15"
+    - "2020-10-15"
+    - "2021-11-05"
+
+training:
+  batch_size: 16
+  epochs: 50
+  learning_rate: 0.001
+  early_stopping_patience: 10
+  use_class_weights: true
+  evaluation_threshold: 0.35
