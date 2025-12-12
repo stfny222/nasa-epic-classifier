@@ -44,6 +44,9 @@ ml/processed_data/
 !ml/models/test_results.png
 !ml/models/training_history.png
 
+# Ignore training checkpoints (temporary)
+ml/models/.best_model_checkpoint.pth
+
 # Misc
 .env
 .env.local

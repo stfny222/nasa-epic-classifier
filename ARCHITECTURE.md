@@ -34,7 +34,7 @@ ImageNet Pre-trained ResNet18
 - **Single output** directly predicts land percentage
 
 **Performance:**
-- MAE: 5.15% | RMSE: 6.84% | R²: 0.8847
+- MAE: 5.92% | RMSE: 7.95% | R²: 0.8444
 
 ## Data Pipeline
 
@@ -145,7 +145,7 @@ Initially considered multi-label classification (predict 6 visible continents), 
 | **Output** | Single % value (0-100) | 6 binary labels |
 | **Ground Truth** | Coordinates → continuous % | Coordinates → discrete continents |
 | **Model Size** | 1 output neuron | 6 output neurons |
-| **Metric** | MAE: 5.15% | F1: ~0.83 |
+| **Metric** | MAE: 5.92% | F1: ~0.83 |
 | **Interpretability** | Direct % useful for applications | Region identification |
 | **Loss Function** | MSE (simpler) | BCE (class imbalance) |
 
@@ -159,7 +159,7 @@ ResNet18 pre-trained from ImageNet vs training from scratch:
 |--------|----------|-------------|
 | **Parameters** | 11.3M (5M trainable) | 11.3M (all trainable) |
 | **Convergence** | 25 epochs | 50+ epochs |
-| **Final MAE** | 5.15% | Would be ~12% |
+| **Final MAE** | 5.92% | Would be ~12% |
 | **Dataset** | 141 images | 141 images |
 | **Overfitting Risk** | Low | High |
 
